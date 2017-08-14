@@ -22,7 +22,8 @@
   "homepage": "https://github.com/fullstacktraining/mean-stack-app#readme",
   "dependencies": {
     "body-parser": "^1.17.2",
-    "express": "^4.13.3"
+    "express": "^4.13.3",
+    "mongodb": "^2.2.31"
   },
   "devDependencies": {
     "mocha": "^2.3.3"
