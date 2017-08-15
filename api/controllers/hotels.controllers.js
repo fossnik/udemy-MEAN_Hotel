@@ -1,9 +1,9 @@
 var dbconn = require('../data/dbconnection.js');
-var ObjectId = require('mongodb').ObjectId;
 var hotelData = require('../data/hotel-data.json');
 
-module.exports.hotelsGetAll = function(req, res) {
+var ObjectId = require('mongodb').ObjectId;
 
+module.exports.hotelsGetAll = function(req, res) {
 	var db = dbconn.get();
 	var collection = db.collection('hotels');
 
@@ -39,7 +39,9 @@ module.exports.hotelsGetOne = function(req, res) {
 	console.log("GET the hotelId", hotelId);
 
 	collection
-		.findOne({}, function(err, doc) {
+		.findOne({
+			_id : ObjectId(hotelId)
+		}, function(err, doc) {
 			res
 				.status(200)
 				.json( doc );
@@ -48,9 +50,25 @@ module.exports.hotelsGetOne = function(req, res) {
 
 
 module.exports.hotelsAddOne = function(req, res) {
+	var db = dbconn.get();
+	var collection = db.collection('hotels');
+	var newHotel;
+
 	console.log("POST new hotel");
-	console.log(req.body);
-	res
-		.status(200)
-		.json(req.body);
-}
+
+	if (req.body && req.body.name && req.body.stars) {
+		newHotel = req.body;
+		newHotel.stars = parseInt(req.body.stars, 10);
+		collection.insertOne(newHotel, function(err, response) {
+			console.log(response);
+			res
+			.status(201)
+			.json(response);
+		});
+	} else {
+		console.log("Data Missing from Body");
+		res
+			.status(400)
+			.json({ message : "Required data missing from body" });
+	}
+};
